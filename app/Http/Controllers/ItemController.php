@@ -13,16 +13,23 @@ class ItemController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $items = Item::with('category')
-            ->withSum(['lendings' => function ($query) {
-                $query->whereNull('returned_at');
-            }], 'total')
-            ->get();
-            
-        return view('items.index', compact('items'));
-    }
+   public function index()
+{
+    $items = Item::with('category')
+        ->withSum(['lendings as lendings_sum_total' => function ($query) {
+            $query->whereNull('returned_at');
+        }], 'total')
+        ->get()
+        ->map(function ($item) {
+            $item->available = $item->total 
+                - $item->repair 
+                - ($item->lendings_sum_total ?? 0);
+
+            return $item;
+        });
+
+    return view('items.index', compact('items'));
+}
 
     public function create()
     {
