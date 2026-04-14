@@ -2,34 +2,31 @@
 
 @section('content')
 <div>
-    
+
     <h4 style="font-weight:600; margin-bottom:20px;">
         Dashboard
     </h4>
 
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px;">
-        <!-- TOTAL ITEM -->
-        <div style="background:rgba(59,130,246,0.15); padding:20px; border-radius:12px;">
-            <div style="font-size:13px; color:#93c5fd;">Total Barang</div>
-            <div style="font-size:22px; font-weight:bold;">{{ $totalItems ?? 0 }}</div>
-        </div>
+    <div style="
+        background:#020617;
+        border:1px solid rgba(255,255,255,0.05);
+        padding:30px;
+        border-radius:16px;
+        color:#e2e8f0;
+    ">
+        <h2 style="font-size:22px; font-weight:600; margin-bottom:10px;">
+            Selamat Datang, {{ auth()->user()->name }} 👋
+        </h2>
 
-        <!-- DIPINJAM -->
-        <div style="background:rgba(234,179,8,0.15); padding:20px; border-radius:12px;">
-            <div style="font-size:13px; color:#fde68a;">Sedang Dipinjam</div>
-            <div style="font-size:22px; font-weight:bold;">{{ $totalBorrowed ?? 0 }}</div>
-        </div>
+        <p style="color:#94a3b8; line-height:1.6;">
+            Ini adalah halaman dashboard sistem inventaris. 
+            Di sini kamu bisa mengelola data barang, melakukan peminjaman, 
+            serta memantau kondisi barang dengan mudah dan cepat.
+        </p>
 
-        <!-- RUSAK -->
-        <div style="background:rgba(239,68,68,0.15); padding:20px; border-radius:12px;">
-            <div style="font-size:13px; color:#fca5a5;">Barang Rusak</div>
-            <div style="font-size:22px; font-weight:bold;">{{ $totalBroken ?? 0 }}</div>
-        </div>
-
-    </div>
-
-    <div style="margin-top:25px; color:#94a3b8;">
-        Selamat datang, {{ auth()->user()->name }}
+        <p style="margin-top:15px; color:#64748b;">
+            Gunakan menu di sebelah kiri untuk mulai mengakses fitur yang tersedia.
+        </p>
     </div>
 
 </div>

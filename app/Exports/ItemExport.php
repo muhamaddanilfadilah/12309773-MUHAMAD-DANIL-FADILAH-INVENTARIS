@@ -9,11 +9,13 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class ItemExport implements FromCollection, WithHeadings, WithMapping
 {
+    protected $no = 1;
+
     public function collection()
     {
         return Item::with('category')
-            ->withSum(['lendings' => function ($query) {
-                $query->whereNull('returned_at');
+            ->withSum(['lendings' => function ($q) {
+                $q->whereNull('returned_at');
             }], 'total')
             ->get();
     }
@@ -21,22 +23,26 @@ class ItemExport implements FromCollection, WithHeadings, WithMapping
     public function headings(): array
     {
         return [
-            'Category',
-            'Name Item',
+            'No',
+            'Kategori',
+            'Nama Barang',
             'Total',
-            'Repair Total',
-            'Last Updated'
+            'Tersedia',
+            'Rusak',
+            'Dipinjam'
         ];
     }
 
     public function map($item): array
     {
         return [
+            $this->no++,
             $item->category->name ?? '-',
             $item->name,
             $item->total,
-            $item->repair == 0 ? '-' : $item->repair,
-            $item->updated_at->format('M j, Y'),
+            $item->available,
+            $item->repair,
+            $item->lendings_sum_total ?? 0,
         ];
     }
 }

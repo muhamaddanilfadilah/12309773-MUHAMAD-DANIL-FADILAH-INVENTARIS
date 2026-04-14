@@ -1,7 +1,6 @@
 <?php
 
-// Cara Membuat Controller di Laravel
-// php artisan make:controller AuthController
+
 
 namespace App\Http\Controllers;
 

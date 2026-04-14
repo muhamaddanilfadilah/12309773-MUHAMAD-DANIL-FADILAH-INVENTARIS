@@ -2,61 +2,53 @@
 
 namespace App\Exports;
 
-use App\Models\Lending;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
 
-class LendingExport implements FromCollection, WithHeadings, WithMapping
+class LendingExport implements FromCollection, WithHeadings
 {
+    protected $lendings;
+
+    public function __construct($lendings)
+    {
+        $this->lendings = $lendings;
+    }
+
     public function collection()
     {
-        return Lending::with(['item', 'editor'])->latest()->get();
+        return $this->lendings->map(function ($lending) {
+            return [
+                'No' => $lending->no,
+                'Nama Peminjam' => $lending->name,
+                'Barang' => $lending->item->name ?? '-',
+                'Total' => $lending->total,
+                'Keterangan' => $lending->keterangan ?? '-',
+
+                
+                'Tanggal Pinjam' => \Carbon\Carbon::parse($lending->date)->format('d-m-Y H:i:s'),
+
+                'Tanggal Kembali' => $lending->returned_at
+                    ? \Carbon\Carbon::parse($lending->returned_at)->format('d-m-Y H:i:s')
+                    : '-',
+
+                'Status' => $lending->returned_at ? 'Kembali' : 'Dipinjam',
+                'Editor' => $lending->editor->name ?? '-',
+            ];
+        });
     }
 
     public function headings(): array
     {
         return [
             'No',
-            'Item Name',
-            'Total Dipinjam',
-            'Repair',
-            'Borrower Name',
+            'Nama Peminjam',
+            'Barang',
+            'Total',
             'Keterangan',
             'Tanggal Pinjam',
             'Tanggal Kembali',
+            'Status',
             'Editor'
-        ];
-    }
-
-    public function map($lending): array
-    {
-        static $no = 1;
-
-        $repair = ($lending->item && $lending->item->repair == 0)
-            ? '-'
-            : ($lending->item->repair ?? '-');
-
-        $tanggalPinjam = $lending->date
-            ? date('d-m-Y', strtotime($lending->date))
-            : '-';
-
-        $tanggalKembali = $lending->returned_at
-            ? date('d-m-Y', strtotime($lending->returned_at))
-            : '-';
-
-        $editor = $lending->editor->name ?? '-';
-
-        return [
-            $no++,
-            $lending->item->name ?? '-',
-            $lending->total,
-            $repair,
-            $lending->name,
-            $lending->keterangan ?? '-',
-            $tanggalPinjam,
-            $tanggalKembali,
-            $editor
         ];
     }
 }
